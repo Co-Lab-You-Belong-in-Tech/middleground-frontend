@@ -10,20 +10,17 @@ function App() {
   const [loading, setLoading] = useState(false);
   return (
     <div className="App">
-      <div className="heading">
-        <h1>MiddleGround</h1>
-      </div>
-      <div className="Form">
-        <Searchbar setResults={setResults} setLoading={setLoading} />
-      </div>
+      <Searchbar setResults={setResults} setLoading={setLoading} />
       {loading ? (
-        <Loader
-          type="Plane"
-          style={{ textAlign: "center", marginTop: "50" }}
-          color="#ad343e"
-          height={150}
-          width={150}
-        />
+        <div class="loader">
+          <Loader
+            type="Oval"
+            style={{ textAlign: "center", marginTop: "50" }}
+            color="black"
+            height={100}
+            width={100}
+          />
+        </div>
       ) : (
         <Results results={results} />
       )}

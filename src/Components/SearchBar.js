@@ -1,69 +1,59 @@
 import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import { MenuItem, Select } from "@material-ui/core";
-import {
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider,
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import { MenuItem, Select, InputAdornment } from "@material-ui/core";
+import SearchIcon from "@material-ui/icons/Search";
+import { DateTime } from "luxon";
 
 function Searchbar({ setResults, setLoading }) {
-  // const [loading, isLoading] = useState(false);
   const [value, setValue] = useState("");
-  const [view, setView] = useState("center");
+  const [bias, setBias] = useState("center");
   const [orderBy, setOrderBy] = useState("publishedAt");
-  const [selectFromDate, setSelectFromDate] = useState(new Date());
-  const [selectToDate, setSelectToDate] = useState(new Date());
+  const [timePeriod, setTimePeriod] = useState("threeDays");
+  var toDate = DateTime.now().toSQLDate();
+  const [fromDate, setFromDate] = useState(DateTime.now().toSQLDate());
 
-  function handleFromDateChange(date) {
-    setSelectFromDate(date);
-  }
-  function handleToDateChange(date) {
-    setSelectToDate(date);
-  }
-
-  function handleChange(event) {
-    // console.log(event.target.value);
-    setView(event.target.value);
+  function handleBiasChange(event) {
+    setBias(event.target.value);
+    callingApi();
   }
 
   function handleOrderBy(event) {
     setOrderBy(event.target.value);
+    callingApi();
   }
 
-  function formatDate(date) {
-    var [month, day, year] = [
-      date.getMonth(),
-      date.getDate(),
-      date.getFullYear(),
-    ];
-    day = day.toLocaleString("en-US", {
-      minimumIntegerDigits: 2,
-      useGrouping: false,
-    });
-
-    month = month + 1;
-
-    month = month.toLocaleString("en-US", {
-      minimumIntegerDigits: 2,
-      useGrouping: false,
-    });
-    const returnDate = `${year}-${month}-${day}`;
-    return returnDate;
+  function handleTimePeriod(event) {
+    setTimePeriod(event.target.value);
+    var now = DateTime.now();
+    var period = event.target.value;
+    var fromDate;
+    if (period === "threeDays") {
+      fromDate = now.minus({ days: 3 }).toSQLDate();
+    } else if (period === "tenDays") {
+      fromDate = now.minus({ days: 7 }).toSQLDate();
+    } else {
+      fromDate = now.minus({ days: 30 }).toSQLDate();
+    }
+    setFromDate(fromDate);
+    callingApi();
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setLoading(true);
 
-    // console.log(event);
-    var fromDate = formatDate(selectFromDate);
-    var toDate = formatDate(selectToDate);
+    if (event.key !== "Enter" || value === "") {
+      return;
+    }
+    callingApi();
+  }
+
+  async function callingApi() {
+    if (value === "") return;
+    setLoading(true);
 
     try {
       var res = await fetch(
-        `http://localhost:3500/searchTerm?query=${value}&view=${view}&datefrom=${fromDate}&dateto=${toDate}&order=${orderBy}`
+        `http://localhost:3500/searchTerm?query=${value}&view=${bias}&datefrom=${fromDate}&dateto=${toDate}&order=${orderBy}`
       );
 
       if (res.ok) {
@@ -84,63 +74,72 @@ function Searchbar({ setResults, setLoading }) {
   }
 
   return (
-    <form
-      onSubmit={(event) => handleSubmit(event)}
-      style={{ display: "block", margin: "0 auto" }}
-    >
-      <TextField
-        color="secondary"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        label="Search Term"
-        required
-        style={{ width: "100%" }}
-      />
-      <Select style={{ margin: 20 }} onChange={handleChange} value={view}>
-        <MenuItem value="center">center</MenuItem>
-        <MenuItem value="left">left</MenuItem>
-        <MenuItem value="right">right</MenuItem>
-      </Select>
-      <Select style={{ margin: 15 }} onChange={handleOrderBy} value={orderBy}>
-        <MenuItem value="publishedAt">Latest</MenuItem>
-        <MenuItem value="popularity">Most popular source</MenuItem>
-        <MenuItem value="relevancy">
-          Most relevant to {value || "search term"}
-        </MenuItem>
-      </Select>
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDatePicker
-          disableToolbar
-          variant="inline"
-          format="yyyy/MM/dd"
-          margin="normal"
-          label="From Date"
-          disableFuture={true}
-          value={selectFromDate}
-          onChange={handleFromDateChange}
-          KeyboardButtonProps={{
-            "aria-label": "change date",
+    <div>
+      <div className="heading heading-flex">
+        <h1>MiddleGround</h1>
+        <TextField
+          color="primary"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          label={`Search Term`}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
           }}
+          onKeyUp={handleSubmit}
+          variant="outlined"
+          className="search-bar"
         />
-        <KeyboardDatePicker
-          disableToolbar
-          variant="inline"
-          format="yyyy/MM/dd"
-          margin="normal"
-          label="To Date"
-          disableFuture={true}
-          value={selectToDate}
-          onChange={handleToDateChange}
-          KeyboardButtonProps={{
-            "aria-label": "change date",
-          }}
-        />
-      </MuiPickersUtilsProvider>
+      </div>
+      <div class="bias-picker">
+        <label className="bias-label">Bias: </label>
+        <Select
+          style={{ width: "80%" }}
+          onChange={handleBiasChange}
+          value={bias}
+        >
+          <MenuItem value="center">
+            <p className="menu-item">Center</p>
+          </MenuItem>
+          <MenuItem value="left">
+            <p className="menu-item">Left</p>
+          </MenuItem>
+          <MenuItem value="right">
+            <p className="menu-item">Right</p>
+          </MenuItem>
+        </Select>
+      </div>
 
-      <Button type="submit" variant="outlined" color="primary">
-        Submit
-      </Button>
-    </form>
+      <div className="sorting-selector-container">
+        <Select
+          variant="outlined"
+          onChange={handleOrderBy}
+          value={orderBy}
+          className="order-by"
+        >
+          <MenuItem value="publishedAt">Latest</MenuItem>
+          <MenuItem value="popularity">Most popular source</MenuItem>
+          <MenuItem value="relevancy">
+            Most relevant to {value || "search term"}
+          </MenuItem>
+        </Select>
+        {orderBy !== "publishedAt" && (
+          <Select
+            onChange={handleTimePeriod}
+            value={timePeriod}
+            className="order-by"
+            variant="outlined"
+          >
+            <MenuItem value="threeDays">Past 3 days</MenuItem>
+            <MenuItem value="tenDays">Past 7 days</MenuItem>
+            <MenuItem value="month">Past 30 days</MenuItem>
+          </Select>
+        )}
+      </div>
+    </div>
   );
 }
 
