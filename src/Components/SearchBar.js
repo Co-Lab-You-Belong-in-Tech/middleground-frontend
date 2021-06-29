@@ -15,7 +15,7 @@ function Searchbar({ setResults, setLoading }) {
   async function callingApi(value, bias, fromDate, toDate, orderBy) {
     if (value === "") return;
     setLoading(true);
-
+    console.log(value, bias, fromDate, toDate, orderBy);
     try {
       var res = await fetch(
         `https://middleground-backend.herokuapp.com/searchTerm?query=${value}&view=${bias}&datefrom=${fromDate}&dateto=${toDate}&order=${orderBy}`
@@ -37,7 +37,6 @@ function Searchbar({ setResults, setLoading }) {
   }
 
   function handleBiasChange(event) {
-    console.log(event.target.value, "is the target value");
     setBias(() => event.target.value);
     callingApi(value, event.target.value, fromDate, toDate, orderBy);
   }
@@ -69,7 +68,7 @@ function Searchbar({ setResults, setLoading }) {
     if (event.key !== "Enter" || value === "") {
       return;
     }
-    callingApi();
+    callingApi(value, bias, fromDate, toDate, orderBy);
   }
 
   return (
