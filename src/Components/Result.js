@@ -1,30 +1,32 @@
 import React from "react";
 
 const Result = (props) => {
+  // eslint-disable-next-line
   const { title, author, source, url, image, publishedAt } = props;
-  let hero = image || `http://pets-images.dev-apis.com/pets/none.jpg`;
+  let hero = image || `https://placedog.net/270`;
 
   var [date, time] = publishedAt.split("T");
   time = time.slice(0, -1);
   return (
-    <a href={url} target="_blank" rel="noreferrer" className="result">
-      <div className="image-container">
-        <img src={hero} alt={title} />
-      </div>
+    <div className="result">
+      <a href={url} target="_blank" rel="noreferrer">
+        <div className="image-container">
+          <img src={hero} alt={title} />
+        </div>
+      </a>
       <div className="info">
-        <h1>{title}</h1>
-        <h2>
+        <a href={url} target="_blank" rel="noreferrer">
+          <h2>{title}</h2>
+        </a>
+        {/* <p>
           author(s): <strong>{author}</strong>
-        </h2>
-        {/* <h2>{`author(s): ${author}`}</h2> */}
-        <h2>
-          source: <strong>{source}</strong>
-        </h2>
-        {/* <h2>{`source: ${source}`}</h2>
-        <h2>{`source: ${source}`}</h2> */}
-        <p>{`${date} | ${time}`}</p>
+        </p> */}
+        <div className="source-date-container">
+          <div className="source">Source: {source}</div>
+          <div className="date">Published at: {`${time}, ${date}`}</div>
+        </div>
       </div>
-    </a>
+    </div>
   );
 };
 
