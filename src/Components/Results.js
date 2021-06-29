@@ -7,7 +7,7 @@ function Results({ results }) {
       {!results.length ? (
         <h2 className="results-place-holder">No results found!</h2>
       ) : (
-        <div class="results">
+        <div className="results">
           {results.map(function (result, index) {
             return (
               <Result

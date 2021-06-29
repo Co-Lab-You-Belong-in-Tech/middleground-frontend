@@ -12,7 +12,7 @@ function App() {
     <div className="App">
       <Searchbar setResults={setResults} setLoading={setLoading} />
       {loading ? (
-        <div class="loader">
+        <div className="loader">
           <Loader
             type="Oval"
             style={{ textAlign: "center", marginTop: "50" }}

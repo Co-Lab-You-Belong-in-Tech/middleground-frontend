@@ -9,17 +9,42 @@ function Searchbar({ setResults, setLoading }) {
   const [bias, setBias] = useState("center");
   const [orderBy, setOrderBy] = useState("publishedAt");
   const [timePeriod, setTimePeriod] = useState("threeDays");
-  var toDate = DateTime.now().toSQLDate();
   const [fromDate, setFromDate] = useState(DateTime.now().toSQLDate());
+  var toDate = DateTime.now().toSQLDate();
+
+  async function callingApi(value, bias, fromDate, toDate, orderBy) {
+    if (value === "") return;
+    setLoading(true);
+
+    try {
+      var res = await fetch(
+        `https://middleground-backend.herokuapp.com/searchTerm?query=${value}&view=${bias}&datefrom=${fromDate}&dateto=${toDate}&order=${orderBy}`
+      );
+
+      if (res.ok) {
+        res = await res.json();
+        await setResults(res.articles);
+      } else {
+        alert("No articles found!");
+        setResults([]);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log("CATCHING");
+      await setResults([]);
+      setLoading(false);
+    }
+  }
 
   function handleBiasChange(event) {
-    setBias(event.target.value);
-    callingApi();
+    console.log(event.target.value, "is the target value");
+    setBias(() => event.target.value);
+    callingApi(value, event.target.value, fromDate, toDate, orderBy);
   }
 
   function handleOrderBy(event) {
-    setOrderBy(event.target.value);
-    callingApi();
+    setOrderBy(() => event.target.value);
+    callingApi(value, bias, fromDate, toDate, event.target.value);
   }
 
   function handleTimePeriod(event) {
@@ -34,8 +59,8 @@ function Searchbar({ setResults, setLoading }) {
     } else {
       fromDate = now.minus({ days: 30 }).toSQLDate();
     }
-    setFromDate(fromDate);
-    callingApi();
+    setFromDate(() => fromDate);
+    callingApi(value, bias, fromDate, toDate, orderBy);
   }
 
   async function handleSubmit(event) {
@@ -45,32 +70,6 @@ function Searchbar({ setResults, setLoading }) {
       return;
     }
     callingApi();
-  }
-
-  async function callingApi() {
-    if (value === "") return;
-    setLoading(true);
-
-    try {
-      var res = await fetch(
-        `http://localhost:3500/searchTerm?query=${value}&view=${bias}&datefrom=${fromDate}&dateto=${toDate}&order=${orderBy}`
-      );
-
-      if (res.ok) {
-        res = await res.json();
-        // console.log(res);
-        await setResults(res.articles);
-      } else {
-        alert("No articles found!");
-        setResults([]);
-      }
-      setLoading(false);
-    } catch (error) {
-      // console.log(error);
-      console.log("CATCHING");
-      await setResults([]);
-      setLoading(false);
-    }
   }
 
   return (
@@ -94,24 +93,26 @@ function Searchbar({ setResults, setLoading }) {
           className="search-bar"
         />
       </div>
-      <div class="bias-picker">
-        <label className="bias-label">Bias: </label>
-        <Select
-          style={{ width: "80%" }}
-          onChange={handleBiasChange}
-          value={bias}
-        >
-          <MenuItem value="center">
-            <p className="menu-item">Center</p>
-          </MenuItem>
-          <MenuItem value="left">
-            <p className="menu-item">Left</p>
-          </MenuItem>
-          <MenuItem value="right">
-            <p className="menu-item">Right</p>
-          </MenuItem>
-        </Select>
-      </div>
+      {orderBy !== "popularity" && (
+        <div className="bias-picker">
+          <label className="bias-label">Bias: </label>
+          <Select
+            style={{ width: "80%" }}
+            onChange={handleBiasChange}
+            value={bias}
+          >
+            <MenuItem value="center">
+              <p className="menu-item">Center</p>
+            </MenuItem>
+            <MenuItem value="left">
+              <p className="menu-item">Left</p>
+            </MenuItem>
+            <MenuItem value="right">
+              <p className="menu-item">Right</p>
+            </MenuItem>
+          </Select>
+        </div>
+      )}
 
       <div className="sorting-selector-container">
         <Select
