@@ -100,6 +100,9 @@ function Searchbar({ setResults, setLoading }) {
             onChange={handleBiasChange}
             value={bias}
           >
+            <MenuItem value="all">
+              <p className="menu-item">All News</p>
+            </MenuItem>
             <MenuItem value="center">
               <p className="menu-item">Center</p>
             </MenuItem>
@@ -122,9 +125,6 @@ function Searchbar({ setResults, setLoading }) {
         >
           <MenuItem value="publishedAt">Latest</MenuItem>
           <MenuItem value="popularity">Most popular source</MenuItem>
-          <MenuItem value="relevancy">
-            Most relevant to {value || "search term"}
-          </MenuItem>
         </Select>
         {orderBy !== "publishedAt" && (
           <Select
