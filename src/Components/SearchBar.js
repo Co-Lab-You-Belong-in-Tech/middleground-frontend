@@ -4,6 +4,7 @@ import { MenuItem, Select, InputAdornment } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import { DateTime } from "luxon";
 import { makeStyles } from "@material-ui/styles";
+import { assignBias } from "../utils/assignOrgBias";
 
 const useStyles = makeStyles({
   searchBar: {
@@ -27,18 +28,22 @@ function Searchbar({ setResults, setLoading }) {
       var res = await fetch(
         `https://middleground-backend.herokuapp.com/searchTerm?query=${value}&view=${bias}&datefrom=${fromDate}&dateto=${toDate}&order=${orderBy}`
       );
-
+      // console.log(res);
+      // console.log(await res.json());
       if (res.ok) {
         res = await res.json();
-        await setResults(res.articles);
+        var newResults = assignBias(res.articles);
+        console.log(newResults);
+        await setResults(newResults);
       } else {
-        alert("No articles found!");
         setResults([]);
       }
       setLoading(false);
     } catch (error) {
+      console.log(error);
       console.log("CATCHING");
       await setResults([]);
+    } finally {
       setLoading(false);
     }
   }

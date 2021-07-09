@@ -1,0 +1,42 @@
+{
+    "list": [{
+            "name": "Al Jazeera",
+            "hostname": "www.aljazeera.com",
+            "bias": "center"
+        }, {
+            "name": "AP news",
+            "hostname": "apnews.com",
+            "bias": "center"
+        }, {
+            "name": "The Hill",
+            "hostname": "thehill.com",
+            "bias": "center"
+        }, {
+            "name": "Fortune",
+            "hostname": "fortune.com",
+            "bias": "center"
+        }, {
+            "name": "Reuters",
+            "hostname": "www.reuters.com",
+            "bias": "left leaning"
+        }, {
+            "name": "CBS news",
+            "hostname": "www.cbsnews.com",
+            "bias": "left leaning"
+        },
+        {
+            "name": "NBC news",
+            "hostname": "www.nbcnews.com",
+            "bias": "left leaning"
+        },
+        {
+            "name": "Axios",
+            "hostname": "www.axios.com",
+            "bias": "left leaning"
+        }, {
+            "name": "Bloomberg",
+            "hostname": "www.bloomberg.com",
+            "bias": "right leaning"
+        }
+    ]
+}
