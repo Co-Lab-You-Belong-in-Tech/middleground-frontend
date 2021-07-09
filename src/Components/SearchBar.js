@@ -3,8 +3,15 @@ import TextField from "@material-ui/core/TextField";
 import { MenuItem, Select, InputAdornment } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import { DateTime } from "luxon";
+import { makeStyles } from "@material-ui/styles";
 
+const useStyles = makeStyles({
+  searchBar: {
+    width: "70%",
+  },
+});
 function Searchbar({ setResults, setLoading }) {
+  const classes = useStyles();
   const [value, setValue] = useState("");
   const [bias, setBias] = useState("center");
   const [orderBy, setOrderBy] = useState("publishedAt");
@@ -73,13 +80,10 @@ function Searchbar({ setResults, setLoading }) {
 
   return (
     <div>
-      <div className="heading heading-flex">
-        <h1>MiddleGround</h1>
+      <div class="search-bar-container">
         <TextField
-          color="primary"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          label={`Search Term`}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -87,9 +91,12 @@ function Searchbar({ setResults, setLoading }) {
               </InputAdornment>
             ),
           }}
+          autoFocus
+          placeholder="Let's find you some articles! Type anything you want to know about"
           onKeyUp={handleSubmit}
-          variant="outlined"
-          className="search-bar"
+          color="primary"
+          variant="standard"
+          className={`${classes.searchBar} search-bar`}
         />
       </div>
       {orderBy !== "popularity" && (
@@ -107,10 +114,10 @@ function Searchbar({ setResults, setLoading }) {
               <p className="menu-item">Center</p>
             </MenuItem>
             <MenuItem value="left">
-              <p className="menu-item">Left</p>
+              <p className="menu-item">Left Leaning</p>
             </MenuItem>
             <MenuItem value="right">
-              <p className="menu-item">Right</p>
+              <p className="menu-item">Right Leaning</p>
             </MenuItem>
           </Select>
         </div>
@@ -123,8 +130,12 @@ function Searchbar({ setResults, setLoading }) {
           value={orderBy}
           className="order-by"
         >
-          <MenuItem value="publishedAt">Latest</MenuItem>
-          <MenuItem value="popularity">Most popular source</MenuItem>
+          <MenuItem value="publishedAt">
+            <p className="item-selector">Latest</p>
+          </MenuItem>
+          <MenuItem value="popularity" className="item-selector">
+            <p className="item-selector">Most popular source</p>
+          </MenuItem>
         </Select>
         {orderBy !== "publishedAt" && (
           <Select
@@ -133,9 +144,15 @@ function Searchbar({ setResults, setLoading }) {
             className="order-by"
             variant="outlined"
           >
-            <MenuItem value="threeDays">Past 3 days</MenuItem>
-            <MenuItem value="tenDays">Past 7 days</MenuItem>
-            <MenuItem value="month">Past 30 days</MenuItem>
+            <MenuItem value="threeDays" className="item-selector">
+              <p className="item-selector">Past 3 days</p>
+            </MenuItem>
+            <MenuItem value="tenDays" className="item-selector">
+              <p className="item-selector">Past 7 days</p>
+            </MenuItem>
+            <MenuItem value="month" className="item-selector">
+              <p className="item-selector">Past 30 days</p>
+            </MenuItem>
           </Select>
         )}
       </div>
