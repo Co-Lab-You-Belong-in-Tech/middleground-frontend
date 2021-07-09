@@ -1,9 +1,10 @@
 import React from "react";
+import Placeholder from "./../resources/placeholder.png";
 
 const Result = (props) => {
   // eslint-disable-next-line
-  const { title, author, source, url, image, publishedAt } = props;
-  let hero = image || `https://placedog.net/270`;
+  const { title, source, url, image, publishedAt } = props;
+  let hero = image || Placeholder;
 
   var [date, time] = publishedAt.split("T");
   time = time.slice(0, -1);
@@ -18,9 +19,6 @@ const Result = (props) => {
         <a href={url} target="_blank" rel="noreferrer">
           <h2>{title}</h2>
         </a>
-        {/* <p>
-          author(s): <strong>{author}</strong>
-        </p> */}
         <div className="source-date-container">
           <div className="source">Source: {source}</div>
           <div className="date">Published at: {`${time}, ${date}`}</div>
