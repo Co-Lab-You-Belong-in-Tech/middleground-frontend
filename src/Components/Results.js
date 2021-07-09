@@ -19,6 +19,8 @@ function Results({ results }) {
                 publishedAt={`${result.publishedAt}`}
                 id={result.publishedAt}
                 key={`${result.publishedAt} ${index}`}
+                biasImage={result.biasImage}
+                bias={result.bias}
               />
             );
           })}
